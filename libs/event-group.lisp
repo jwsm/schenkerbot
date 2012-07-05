@@ -38,10 +38,15 @@
 (defgeneric quality (eg))
 (defgeneric (setf quality) (q eg))
 
+
+(defgeneric add-cope-event-to-group (cope-event eg))
+
 ; Value Added
 
 (defgeneric pitches (eg))
 (defgeneric pitch-set (eg))
+(defgeneric left-hand-events (eg &optional left-hand))
+(defgeneric right-hand-events (eg))
 
 ; Print Methods
 
@@ -84,11 +89,42 @@
 (defmethod (setf quality) (q (eg event-group))
   (setf (slot-value eg 'quality) q))
 
+(defmethod add-cope-event-to-group (cope-event (eg event-group))
+  "Add a cope event to an event group."
+  (setf (cope-events eg) (append (cope-events eg) (list cope-event))))
+
+(defun left-right-hand-events-helper (events left-hand &optional (split 61))
+  (cond ((null events) ())
+        ((and (>= (second (first events)) split) (not left-hand))
+          (cons (first events) (left-right-hand-events-helper (rest events) left-hand split)))
+        ((and (< (second (first events)) split) left-hand)
+          (cons (first events) (left-right-hand-events-helper (rest events) left-hand split)))
+        (T (left-right-hand-events-helper (rest events) left-hand split))))
+
+(defmethod left-hand-events ((eg event-group) &optional (left-hand t))
+  (left-right-hand-events-helper (cope-events eg) left-hand))
+
+(defmethod right-hand-events ((eg event-group))
+  (left-right-hand-events-helper (cope-events eg) nil))
 
 ; Printing Methods
 ; - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 (defmethod print-group ((eg event-group))
-  (format t "~%Event-Group ~%")
-  (format t "Start: ~a ~%" (start-time eg))
-  (format t "Duration: ~a ~%" (duration eg)))
+  (format t "Event-Group")
+  (format t "~10t Count: ~a" (length (cope-events eg)))
+  (format t "~10t Start: ~a" (start-time eg))
+  (format t "~10t Duration: ~a ~%" (duration eg)))
+
+(defun print-groups (event-groups)
+  (mapcar #'print-group event-groups))
+
+(defun make-cope-event-groups (cope-events-lists)
+  (if (null cope-events-lists) ()
+    (let* ((new-event-group (make-instance 'event-group
+                            :start-time (first (first (first cope-events-lists))))))
+      (mapcar #'(lambda (x) (add-cope-event-to-group x new-event-group)) (first cope-events-lists))
+      (cons new-event-group (make-cope-event-groups (rest cope-events-lists))))))
+
+(defun cope-events-to-event-groups (cope-events)
+  (make-cope-event-groups (group-cope-events-by-simultaneous-start cope-events)))
 
