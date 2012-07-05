@@ -9,6 +9,8 @@
 (defvar *roots-list* ())
 (defvar *key* ())
 
+(defconstant *NUM-PITCH-CLASSES* 12)
+
 ; ---------------------------------------------------------
 ; Define Global Path Vars
 ; ----------------------------------------------------------
@@ -16,11 +18,13 @@
 (defvar *libs-base-path*)
 (defvar *project-base-path*)
 (defvar *project-libs-base-path*)
+(defvar *data-file-path*)
 
 
 (setq *libs-base-path* "/Users/jwsm/Desktop/WACM/libs/")
-(setq *project-base-path* "/Users/jwsm/Desktop/WACM/project/")
-(setq *project-libs-base-path* "/Users/jwsm/Desktop/WACM/project/libs/")
+(setq *project-base-path* "/Users/jwsm/Desktop/WACM/project/project-v2/")
+(setq *project-libs-base-path* "/Users/jwsm/Desktop/WACM/project/project-v2/libs/")
+(setq *data-file-path* "/Users/jwsm/Desktop/WACM/project/")
 
 ; ---------------------------------------------------------
 ; Load Libraries
@@ -40,13 +44,11 @@
 (load (concatenate 'string *project-libs-base-path* "fuzzy-chords.lisp"))
 (load (concatenate 'string *project-libs-base-path* "fz-catch-key.lisp"))
 (load (concatenate 'string *project-libs-base-path* "event-group.lisp"))
-;(load (concatenate 'string *project-libs-base-path* "beat-group.lisp"))
 (load (concatenate 'string *project-libs-base-path* "cope-event-functions.lisp"))
 (load (concatenate 'string *project-libs-base-path* "set-functions.lisp"))
-;(load (concatenate 'string *project-libs-base-path* "make-groups.lisp"))
-(load (concatenate 'string *project-libs-base-path* "tree-parser.lisp"))
-(load (concatenate 'string *project-libs-base-path* "macro-analysis.lisp"))
-(load (concatenate 'string *project-libs-base-path* "lily-pond.lisp"))
+;(load (concatenate 'string *project-libs-base-path* "tree-parser.lisp"))
+;(load (concatenate 'string *project-libs-base-path* "macro-analysis.lisp"))
+;(load (concatenate 'string *project-libs-base-path* "lily-pond.lisp"))
 
 ;; Data
-(load (concatenate 'string *project-base-path* "jsb1.lisp"))
+(load (concatenate 'string *data-file-path* "jsb1.lisp"))

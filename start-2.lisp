@@ -1,4 +1,4 @@
-(load "/Users/jwsm/Desktop/WACM/project/libs/project-libs.lisp")
+(load "/Users/jwsm/Desktop/WACM/project/project-v2/libs/project-libs.lisp")
 (setq *work-dir* "/Users/jwsm/Desktop/WACM/project/")
 
 #|
@@ -6,6 +6,11 @@
 (setq *first-bar* 0)
 (setq *bar-length* 4000)
 (setq *beats-per-bar* 4)
+
+(setq *surface-level-groups* (cope-events-to-event-groups *input-events*))
+(print-groups *surface-level-groups*)
+(left-hand-events (first *surface-level-groups*))
+
 |#
 ;(saveit)
 
@@ -32,29 +37,8 @@
   (count-chord-roots *roots-list*)
 
   (setq *key* (find-key-of-piece *events*))
-#|
-  ; Load cope events into tree structure
-  (setf *tree* ())
-  (cope-events-to-beat-groups *events*)
-
-  (mapcar #'find-pitch-set *tree*)
-  (mapcar #'find-chord-probs *tree*)
-  (mapcar #'find-best-chord *tree*)
-  (mapcar #'(lambda (x) (find-chord-functions (find-key-of-piece *events*) x)) *tree*)
-
-  (count-best-chord-roots *tree*)
-  (count-all-pitches *events*)
-  |#
   T
 )
 
 ;(run-analysis)
 ;*roots-list*
-
-; Print out the tree structure
-;(print-tree *tree*)
-
-;(count-best-chord-roots *tree*)
-;(count-cope-events-within-all-scales-of-type *events* *MAJ-SCALE*)
-
-;(pitch-class-to-note-name (find-key-of-piece *events*))
