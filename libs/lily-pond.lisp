@@ -31,11 +31,12 @@ midi-note-to-octave
 midi-octave-to-lilypond-octave
 |#
 (defun midi-octave-to-lilypond-octave (octave)
-  "Take the MIDI octave number and return the lilypond octave number (centered around middle c)."
+  "Take the MIDI octave number and return the lilypond octave number."
   (- octave 3))
 
 
 (defun midi-pitch-to-lilypond-octave (midi-pitch)
+  "Take the midi pitch and return the lilypond octave number."
   (midi-octave-to-lilypond-octave (midi-pitch-to-octave midi-pitch)))
 
 #|
@@ -75,6 +76,72 @@ designate octave.
           (cope-events-to-lily-pond (rest events)))))
 
 
+(defun print-lily-pond-chords (chords)
+  "PRINT: print a list of chords to OUTFILE"
+  (cond ((null chords) T)
+        ((null (first chords)) (print-lily-pond-chords (rest chords)))
+        (T (progn
+             (print-lily-pond-chord (first chords))
+             (print-lily-pond-chords (rest chords))))))
+
+(defun print-lily-pond-chord (chord-notes)
+  "PRINT: print a single chord to OUTFILE"
+  (if (null chord-notes) T
+    (progn
+      (format t "<")
+      (print-each-lily-pond-note chord-notes)
+      (format t " > ~%"))))
+
+(defun print-each-lily-pond-note (notes)
+  "PRINT: print a single note to OUTFILE"
+  (if (null notes) T
+    (progn
+      ;;(format t " ~a " (midi-pitch-to-lily-pond (first notes)))
+      (format t " ~a " (first notes))
+      (format t " ")
+      (print-each-lily-pond-note (rest notes)))))
+
+#|
+(defun print-lily-pond-section (notes)
+  "PRINT: print an entire lilypond section, wrapped in { }"
+  (format t "{")
+  (print-each-lily-pond-note notes)
+  (format t "}"))
+|#
+
+(defun print-lily-pond-section-with-chords (chords)
+  "PRINT: print a lily pond section that contains chords, wrapped in { }."
+  (format t "\override Stem #'transparent = ##t~%")
+  (format t "{")
+  (print-lily-pond-chords chords)
+  (format t "}"))
+
+
+
+(defun print-left-hand-lily-pond-chord-from-event-group (event-group &optional (left-hand T))
+  (print-lily-pond-chord (cope-events-to-lily-pond (left-hand-events event-group left-hand))))
+
+(defun print-right-hand-lily-pond-chord-from-event-group (event-group)
+       (print-left-hand-lily-pond-chord-from-event-group event-group nil))
+
+;; THE TEST FUNCTIONS
+;(print-left-hand-lily-pond-chord-from-event-group (first *surface-level-groups*))
+;(print-right-hand-lily-pond-chord-from-event-group (first *surface-level-groups*))
+
+
+(defun print-event-groups-in-lily-pond (event-groups &optional (left-hand T))
+  "Print a list of event groups to lily pond as chords, in the order of the list."
+  (if (null event-groups) T
+    (progn
+      (print-left-hand-lily-pond-chord-from-event-group (first event-groups) left-hand)
+      (print-event-groups-in-lily-pond (rest event-groups) left-hand))))
+
+; (print-event-groups-in-lily-pond *surface-level-groups* nil)
+
+;; ------------------------------------------------------------------------------------------------------
+
+
+#|
 (defun beat-group-to-pitches (beat-group-note-events)
   "Extract pitches from a list of beat-group events."
   (if (null beat-group-note-events) ()
@@ -89,47 +156,29 @@ designate octave.
           (beat-tree-to-pitches (rest tree)))))
 
 
+|#
+
+
+
+
+
+
+
+
+
+
+
+
 ;(print-lily-pond-section-with-chords (beat-tree-to-pitches *tree*))2
 
 #|
 print-each-note
 
 |#
-(defun print-lily-pond-chords (chords)
-  (cond ((null chords) T)
-        ((null (first chords)) (print-lily-pond-chords (rest chords)))
-        (T (progn
-             (print-lily-pond-chord (first chords))
-             (print-lily-pond-chords (rest chords))))))
-
-(defun print-lily-pond-chord (chord-notes)
-  (if (null chord-notes) T
-    (progn
-      (format t "<")
-      (print-each-lily-pond-note chord-notes)
-      (format t " > ~%"))))
 
 
 
-(defun print-each-lily-pond-note (notes)
-  (if (null notes) T
-    (progn
-      (format t " ~a " (midi-pitch-to-lily-pond (first notes)))
-      (format t " ")
-      (print-each-lily-pond-note (rest notes)))))
-
-(defun print-lily-pond-section (notes)
-  (format t "{")
-  (print-each-lily-pond-note notes)
-  (format t "}"))
-
-(defun print-lily-pond-section-with-chords (chords)
-  (format t "{")
-  (print-lily-pond-chords chords)
-  (format t "}"))
-
-
-
+#|
 (defun split-pitches-within-chord (pitches)
   "Takes pitches in a list and returns two sublists, containing pitches > and <= note 60 (two hands)."
   (if (null pitches) '(() ())
@@ -138,7 +187,7 @@ print-each-note
              (list (cons (first pitches) (first recursive-call)) (second recursive-call)))
             (T
              (list (first recursive-call) (cons (first pitches) (second recursive-call))))))))
-
+|#
 #|
   (cond ((null pitches) '(() ()))
 
@@ -154,7 +203,7 @@ print-each-note
 
 ;; THIS IS THE RIGHT FUNCTION TO CALL RIGHT HERE:::: --\
 ;(split-chord-pitch-list-into-two-hands (beat-tree-to-pitches *tree*))
-
+#|
 (defun split-chord-pitch-list-into-two-hands (chord-pitch-list)
   "Split a list of lists of pitches (each sublist a chord) into two sublists (for right and left hand)."
   (if (null chord-pitch-list) '(() ())
@@ -162,7 +211,7 @@ print-each-note
           (recursive-call (split-chord-pitch-list-into-two-hands (rest chord-pitch-list))))
       (list (cons (first split-chord) (first recursive-call))
             (cons (second split-chord) (second recursive-call))))))
-
+|#
 
 
 
@@ -178,7 +227,7 @@ print-each-note
   (with-open-file (outfile "/Users/jwsm/Sites/wacm/tmp/my-test-output.ly" :direction :output :if-exists :supersede)
     (let ((*standard-output* outfile))
       
-      (print-lily-pond-section (cope-events-to-lily-pond *events*))
+      ;(print-lily-pond-section (cope-events-to-lily-pond *events*))
       ;(wrap-lilypond-section (cope-events-to-lilypond *events*) outfile)
 
 
