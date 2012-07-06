@@ -15,7 +15,9 @@
     :initform 0)
    (cope-events :initform ())
    (root :initform ())
-   (quality :initform ())))
+   (quality :initform ())
+   (inversion :initform ())
+   (schenker-level :initform 1)))
 
 ; ---------------------------------------------------------
 ; Generic Method Declarations
@@ -38,6 +40,11 @@
 (defgeneric quality (eg))
 (defgeneric (setf quality) (q eg))
 
+(defgeneric inversion (eg))
+(defgeneric (setf inversion) (i eg))
+
+(defgeneric schenker-level (eg))
+(defgeneric (setf schenker-level) (sl eg))
 
 (defgeneric add-cope-event-to-group (cope-event eg))
 
@@ -47,11 +54,14 @@
 (defgeneric pitch-set (eg))
 (defgeneric left-hand-events (eg &optional left-hand))
 (defgeneric right-hand-events (eg))
+(defgeneric possible-functions (eg))
 
 ; Print Methods
 
 (defgeneric print-group (eg))
 
+; Analysis Methods
+(defgeneric self-analysis (eg))
 
 ; ---------------------------------------------------------
 ; Method Implementations
@@ -89,6 +99,18 @@
 (defmethod (setf quality) (q (eg event-group))
   (setf (slot-value eg 'quality) q))
 
+(defmethod inversion ((eg event-group))
+  (slot-value eg 'inversion))
+
+(defmethod (setf inversion) (i (eg event-group))
+  (setf (slot-value eg 'inversion) i))
+
+(defmethod schenker-level ((eg event-group))
+  (slot-value eg 'schenker-level))
+
+(defmethod (setf schenker-level) (sl (eg event-group))
+  (setf (slot-value eg 'schenker-level) sl))
+
 (defmethod add-cope-event-to-group (cope-event (eg event-group))
   "Add a cope event to an event group."
   (setf (cope-events eg) (append (cope-events eg) (list cope-event))))
@@ -107,13 +129,33 @@
 (defmethod right-hand-events ((eg event-group))
   (left-right-hand-events-helper (cope-events eg) nil))
 
+(defmethod pitches ((eg event-group))
+  (mapcar #'second (slot-value eg 'cope-events)))
+
+(defmethod inversion ((eg event-group))
+  (find-inversion-using-cope-events-and-root (cope-events eg) (root eg)))
+
+(defmethod possible-functions ((eg event-group))
+  (let* ((root-scale-degree (pitch-to-scale-degree-given-key (root eg) *key*)))
+    (functions-given-scale-degree-and-quality root-scale-degree (quality eg))))
+
+  ;(mapcar #'second (slot-value eg 'cope-events)))
+
 ; Printing Methods
 ; - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 (defmethod print-group ((eg event-group))
   (format t "Event-Group")
   (format t "~10t Count: ~a" (length (cope-events eg)))
   (format t "~10t Start: ~a" (start-time eg))
-  (format t "~10t Duration: ~a ~%" (duration eg)))
+  (format t "~10t Dur: ~a " (duration eg))
+  (format t "~10t Schenk: ~a " (schenker-level eg))
+  (format t "~10t Root: ~a " (root eg))
+  (format t "~10t inv: ~a " (inversion eg))
+  (format t "~10t Root in Key: ~a " (pitch-to-scale-degree-given-key (root eg) *key*))
+  (format t "~10t Funcs: ~a " (functions-given-scale-degree-and-quality (pitch-to-scale-degree-given-key (root eg) *key*) (quality eg)))
+  (format t "~10t Qual: ~a" (chord-quality-index-to-symbol (quality eg)))
+;  (format t "~10t Function: ~a" (possible-functions eg))
+  (format t "~%"))
 
 (defun print-groups (event-groups)
   (mapcar #'print-group event-groups))
@@ -127,4 +169,16 @@
 
 (defun cope-events-to-event-groups (cope-events)
   (make-cope-event-groups (group-cope-events-by-simultaneous-start cope-events)))
+
+; Analysis Methods
+; - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+(defmethod self-analysis ((eg event-group))
+  (let* ((root-and-type (chord-root-and-type (pitches eg)))
+         (duration (apply #'max (mapcar #'first (cope-events eg))))
+         (inversion (find-inversion-using-cope-events-and-root (cope-events eg) (root eg))))
+    (setf (root eg) (first root-and-type))
+    (setf (quality eg) (second root-and-type))
+    (setf (duration eg) duration)
+    (setf (inversion eg) inversion)))
 
