@@ -89,8 +89,9 @@ designate octave.
   (if (null chord-notes) T
     (progn
       (format t "<")
-      (print-each-lily-pond-note chord-notes)
-      (format t " > ~%"))))
+      (print-each-lily-pond-note (cope-events-to-lily-pond chord-notes))
+      (format t " > ~%")
+      (format t "[_\\markup { \\bold I }]~%"))))
 
 (defun print-each-lily-pond-note (notes)
   "PRINT: print a single note to OUTFILE"
@@ -100,6 +101,8 @@ designate octave.
       (format t " ~a " (first notes))
       (format t " ")
       (print-each-lily-pond-note (rest notes)))))
+
+
 
 #|
 (defun print-lily-pond-section (notes)
@@ -119,7 +122,7 @@ designate octave.
 
 
 (defun print-left-hand-lily-pond-chord-from-event-group (event-group &optional (left-hand T))
-  (print-lily-pond-chord (cope-events-to-lily-pond (left-hand-events event-group left-hand))))
+  (print-lily-pond-chord (left-hand-events event-group left-hand)))
 
 (defun print-right-hand-lily-pond-chord-from-event-group (event-group)
        (print-left-hand-lily-pond-chord-from-event-group event-group nil))
@@ -137,6 +140,9 @@ designate octave.
       (print-event-groups-in-lily-pond (rest event-groups) left-hand))))
 
 ; (print-event-groups-in-lily-pond *surface-level-groups* nil)
+
+
+; (print-event-groups-in-lily-pond *chord-root-groups*)
 
 ;; ------------------------------------------------------------------------------------------------------
 
