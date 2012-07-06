@@ -21,4 +21,8 @@
 (defun note-is-harmonized (cope-event)
   "Fuzzy function, returns 1 if note is properly harmonized within the key.")
 
-(defun 
+
+
+
+; Function to set Schenker Level
+
