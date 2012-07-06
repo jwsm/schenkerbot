@@ -182,3 +182,12 @@
     (setf (duration eg) duration)
     (setf (inversion eg) inversion)))
 
+
+
+(defun event-group-starting-at (event-group-list ontime)
+  "Return the first event group found in event-group-list that starts at ontime."
+  (if (null event-group-list) ()
+    (if (equal (start-time (first event-group-list)) ontime)
+      (first event-group-list)
+      (event-group-starting-at (rest event-group-list) ontime))))
+
