@@ -31,12 +31,17 @@
   ; Calculate the ms-per-beat
   (setq *ms-per-beat* (/ *bar-length* *beats-per-bar*))
 
-  (setq *roots-list* ())
-  (setq *roots-list* (calculate-roots *input-events*))
+  (setq *surface-level-groups* (cope-events-to-event-groups *input-events*))
+  (setq *chord-root-groups* (chord-roots-to-cope-event-groups (calculate-roots *input-events*)))
+  
+  (print-event-groups-in-lily-pond *chord-root-groups*)
 
-  (count-chord-roots *roots-list*)
+;  (setq *roots-list* ())
+;  (setq *roots-list* (calculate-roots *input-events*))
 
-  (setq *key* (find-key-of-piece *events*))
+ ; (count-chord-roots *roots-list*)
+
+ ; (setq *key* (find-key-of-piece *events*))
   T
 )
 

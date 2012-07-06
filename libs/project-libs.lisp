@@ -32,14 +32,17 @@
 
 ;; WACM-provided libraries
 (load (concatenate 'string *libs-base-path* "wacm/mgc.lisp"))
+(load (concatenate 'string *libs-base-path* "wacm/rand.lisp"))
 (load (concatenate 'string *libs-base-path* "wacm/fuzzy.lisp"))
 (load (concatenate 'string *libs-base-path* "wacm/fuzzy_music11.lisp"))
-(load (concatenate 'string *libs-base-path* "wacm/fz_catch_chord.lisp"))
+(load (concatenate 'string *libs-base-path* "wacm/fuzzy-key.lisp"))
+;(load (concatenate 'string *libs-base-path* "wacm/fz_catch_chord.lisp"))
+(load (concatenate 'string *project-libs-base-path* "fz_catch_chord-altered.lisp"))
 
 ;; My libraries
 ;(load (concatenate 'string *project-libs-base-path* "user-prompt.lisp"))
 
-(load (concatenate 'string *project-libs-base-path* "chords.lisp"))
+;(load (concatenate 'string *project-libs-base-path* "chords.lisp"))
 (load (concatenate 'string *project-libs-base-path* "jsm-fuzzy.lisp"))
 (load (concatenate 'string *project-libs-base-path* "fuzzy-chords.lisp"))
 (load (concatenate 'string *project-libs-base-path* "fz-catch-key.lisp"))
@@ -48,7 +51,7 @@
 (load (concatenate 'string *project-libs-base-path* "set-functions.lisp"))
 ;(load (concatenate 'string *project-libs-base-path* "tree-parser.lisp"))
 ;(load (concatenate 'string *project-libs-base-path* "macro-analysis.lisp"))
-;(load (concatenate 'string *project-libs-base-path* "lily-pond.lisp"))
+(load (concatenate 'string *project-libs-base-path* "lily-pond.lisp"))
 
 ;; Data
 (load (concatenate 'string *data-file-path* "jsb1.lisp"))
