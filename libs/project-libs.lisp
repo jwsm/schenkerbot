@@ -36,8 +36,10 @@
 (load (concatenate 'string *libs-base-path* "wacm/fuzzy.lisp"))
 (load (concatenate 'string *libs-base-path* "wacm/fuzzy_music11.lisp"))
 (load (concatenate 'string *libs-base-path* "wacm/fuzzy-key.lisp"))
+(load (concatenate 'string *libs-base-path* "wacm/histo-key.lisp"))
 ;(load (concatenate 'string *libs-base-path* "wacm/fz_catch_chord.lisp"))
 (load (concatenate 'string *project-libs-base-path* "fz_catch_chord-altered.lisp"))
+(load (concatenate 'string *libs-base-path* "wacm/root-lister.lisp"))
 
 ;; My libraries
 ;(load (concatenate 'string *project-libs-base-path* "user-prompt.lisp"))
