@@ -89,10 +89,10 @@
         (fuzzy-3rd (ror-n *FZ-3* root))
         (fuzzy-5th (ror-n *FZ-5* root))
         (fuzzy-7th (ror-n *FZ-7* root)))
-    (ltop
+    (+ 1 (ltop
           (list (apply #'max (fz-intersect lowest-note fuzzy-3rd))
                 (apply #'max (fz-intersect lowest-note fuzzy-5th))
-                (apply #'max (fz-intersect lowest-note fuzzy-7th))))))
+                (apply #'max (fz-intersect lowest-note fuzzy-7th)))))))
 
 ; if distance from root to lowest note is a fuzzy third, first inversion
 ; if distance from root to lowest note is a fuzzy fifth, 2nd inversion
@@ -107,10 +107,6 @@
   (let ((lowest-pitch (find-lowest-pitch-class-in-cope-events cope-events)))
     (if (equal lowest-pitch root-pc) 0
       (test-intervals-above-lowest-pitch lowest-pitch root-pc)))))
-
-
-
-
 
 
 
