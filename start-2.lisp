@@ -9,11 +9,13 @@
 (setq *beats-per-bar* 4)
 
 ; OPTION 3
+|#
 (setq *input-events* b306b)
 (setq *first-bar* 0)
 (setq *bar-length* 4000)
 (setq *beats-per-bar* 4)
 
+#|
 ; OPTION 2
 (setq *input-events* (get-midi "invent8.mid"))
 (setq *first-bar* 0)
@@ -25,6 +27,10 @@
 (left-hand-events (first *surface-level-groups*))
 |#
 ;(saveit)
+
+
+(defvar *CHORD-ROOT-GROUPS* ())
+(defvar *SURFACE-LEVEL-GROUPS* ())
 
 ; ---------------------------------------------------------
 ; Main Program
@@ -59,7 +65,8 @@
   (mapcar #'print-group *surface-level-groups*)
 
   ;; print left hand to lily-pond
-  (event-groups-to-lily-pond *surface-level-groups* T)
+  ;(event-groups-to-lily-pond *surface-level-groups* T)
+  (lily-pond-file-from-event-groups *surface-level-groups* T)
 
 
 
