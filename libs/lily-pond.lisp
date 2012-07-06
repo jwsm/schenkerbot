@@ -57,6 +57,7 @@ midi-note-to-lily-pond
 convert note from MIDI pitch number to lowercase letter plus appropriate tick marks or commas to
 designate octave.
 |#
+
 (defun midi-pitch-to-lily-pond (midi-pitch)
   "Given a midi pitch value to return an absolute lilypond pitch string."
   (let* ((lp-octave (midi-pitch-to-lilypond-octave midi-pitch))
@@ -66,8 +67,6 @@ designate octave.
           ((> lp-octave 0) (concatenate 'string lp-pitch-class (repeat-string lp-octave "'")))
           (T (concatenate 'string lp-pitch-class (repeat-string (abs lp-octave) ","))))))
 
-
-
 (defun cope-events-to-lily-pond (events)
   "Convert a list of cope events to lily pond pitch symbols."
   (if (null events) ()
@@ -75,7 +74,7 @@ designate octave.
             (second (first events)))
           (cope-events-to-lily-pond (rest events)))))
 
-
+#|
 (defun print-lily-pond-chords (chords)
   "PRINT: print a list of chords to OUTFILE"
   (cond ((null chords) T)
@@ -84,16 +83,15 @@ designate octave.
              (print-lily-pond-chord (first chords))
              (print-lily-pond-chords (rest chords))))))
 
-
-
+|#
 
 
 (defun event-groups-to-lily-pond (event-groups left-hand)
+  "PRINT a set of event groups in lily pond format; calls event-group-to-lily-pond for each group."
   (if (null event-groups) ()
     (progn
       (event-group-to-lily-pond (first event-groups) left-hand)
       (event-groups-to-lily-pond (rest event-groups) left-hand))))
-
 
 
 (defun event-group-to-lily-pond (event-group left-hand)
@@ -152,32 +150,38 @@ designate octave.
   (format t "}"))
 |#
 
+#|
 (defun print-lily-pond-section-with-chords (chords)
   "PRINT: print a lily pond section that contains chords, wrapped in { }."
   (format t "\override Stem #'transparent = ##t~%")
   (format t "{")
   (print-lily-pond-chords chords)
   (format t "}"))
+|#
 
-
-
+#|
 (defun print-left-hand-lily-pond-chord-from-event-group (event-group &optional (left-hand T))
   (print-lily-pond-chord (left-hand-events event-group left-hand)))
 
 (defun print-right-hand-lily-pond-chord-from-event-group (event-group)
        (print-left-hand-lily-pond-chord-from-event-group event-group nil))
+|#
 
 ;; THE TEST FUNCTIONS
 ;(print-left-hand-lily-pond-chord-from-event-group (first *surface-level-groups*))
 ;(print-right-hand-lily-pond-chord-from-event-group (first *surface-level-groups*))
 
-
+#|
 (defun print-event-groups-in-lily-pond (event-groups &optional (left-hand T))
   "Print a list of event groups to lily pond as chords, in the order of the list."
   (if (null event-groups) T
     (progn
       (print-left-hand-lily-pond-chord-from-event-group (first event-groups) left-hand)
       (print-event-groups-in-lily-pond (rest event-groups) left-hand))))
+
+|#
+
+
 
 ; (print-event-groups-in-lily-pond *surface-level-groups* nil)
 
@@ -267,8 +271,13 @@ print-each-note
 
 ;(print-lily-pond-section (cope-events-to-lily-pond *events*))
 
+(defun lily-pond-file-from-event-groups (event-groups left-hand)
+  (with-open-file (outfile "/Users/jwsm/Sites/wacm/tmp/event-group-output.ly" :direction :output :if-exists :supersede)
+    (let ((*standard-output* outfile))
+      (event-groups-to-lily-pond event-groups left-hand))))
 
 
+#|
 (defun write-test-file ()
   (with-open-file (outfile "/Users/jwsm/Sites/wacm/tmp/my-test-output.ly" :direction :output :if-exists :supersede)
     (let ((*standard-output* outfile))
@@ -278,5 +287,6 @@ print-each-note
 
 
 )))
+|#
 
-(write-test-file)
+;(write-test-file)
