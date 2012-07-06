@@ -5,9 +5,6 @@
         (T (mapcar #'+ (ror-n *FZ-NOTE* (second (best-chord (first tree))))
             (count-best-chord-roots (rest tree))))))
 
-;  (if (null tree) *FZ-EMPTY*
-    
-
 
 (defun count-all-pitches (cope-events)
   "Count all the pitches in the piece, showing the sums in a set by pitch class."
