@@ -84,6 +84,45 @@ designate octave.
              (print-lily-pond-chord (first chords))
              (print-lily-pond-chords (rest chords))))))
 
+
+
+
+
+(defun event-groups-to-lily-pond (event-groups left-hand)
+  (if (null event-groups) ()
+    (progn
+      (event-group-to-lily-pond (first event-groups) left-hand)
+      (event-groups-to-lily-pond (rest event-groups) left-hand))))
+
+
+
+(defun event-group-to-lily-pond (event-group left-hand)
+"PRINT an event group in lily-pond format, either for left hand or right hand"
+  (cond
+        ;; print the left hand (and chord symbols if they exist)
+        (left-hand
+          ;(cond ((equal (schenker-level event-group) 2)
+          ;        (format t "\\override Stem #'transparent = ##f~%"))
+          ;      (T (format t "\\override Stem #'transparent = ##t~%")))
+
+          (print-lily-pond-chord (left-hand-events event-group))
+          (let ((best-function-choice (first (possible-functions event-group)))
+                (inversion-symbol (inversion-index-to-name (inversion event-group))))
+            (if (null best-function-choice) T
+              (format t "[_\\markup { \\bold ~a ~a }]~%"
+                          (second best-function-choice)
+                          inversion-symbol)))
+          (format t "s ~%~%"))
+
+        ;; print the right hand
+        (T
+          (print-lily-pond-chord (right-hand-events event-group)))))
+
+
+  ;(print-lily-pond-chord (if left-hand (left-hand-events event-group) (right-hand-events event-group)))
+
+
+
 (defun print-lily-pond-chord (chord-notes)
   "PRINT: print a single chord to OUTFILE"
   (if (null chord-notes) T
@@ -91,7 +130,8 @@ designate octave.
       (format t "<")
       (print-each-lily-pond-note (cope-events-to-lily-pond chord-notes))
       (format t " > ~%")
-      (format t "[_\\markup { \\bold I }]~%"))))
+      ;(format t "[_\\markup { \\bold I }]~%")
+      )))
 
 (defun print-each-lily-pond-note (notes)
   "PRINT: print a single note to OUTFILE"
