@@ -84,6 +84,9 @@
 (defun find-lowest-pitch-in-cope-events (cope-events)
   (apply #'min (mapcar #'second cope-events)))
 
+(defun find-highest-pitch-in-cope-events (cope-events)
+  (apply #'max (mapcar #'second cope-events)))
+
 (defun test-intervals-above-lowest-pitch (lowest-pitch root)
   (let ((lowest-note (ror-n *FZ-note* lowest-pitch))
         (fuzzy-3rd (ror-n *FZ-3* root))
