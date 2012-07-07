@@ -141,6 +141,10 @@
 
   ;(mapcar #'second (slot-value eg 'cope-events)))
 
+(defmethod scale-degree-of-root ((eg event-group))
+  (pitch-to-scale-degree-given-key (root eg) *key*))
+
+
 ; Printing Methods
 ; - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 (defmethod print-group ((eg event-group))
@@ -151,8 +155,8 @@
   (format t "~10t Schenk: ~a " (schenker-level eg))
   (format t "~10t Root: ~a " (root eg))
   (format t "~10t inv: ~a " (inversion eg))
-  (format t "~10t Root in Key: ~a " (pitch-to-scale-degree-given-key (root eg) *key*))
-  (format t "~10t Funcs: ~a " (functions-given-scale-degree-and-quality (pitch-to-scale-degree-given-key (root eg) *key*) (quality eg)))
+  (format t "~10t Root in Key: ~a " (scale-degree-of-root eg))
+  (format t "~10t Funcs: ~a " (functions-given-scale-degree-and-quality (scale-degree-of-root eg) (quality eg)))
   (format t "~10t Qual: ~a" (chord-quality-index-to-symbol (quality eg)))
 ;  (format t "~10t Function: ~a" (possible-functions eg))
   (format t "~%"))
@@ -190,4 +194,13 @@
     (if (equal (start-time (first event-group-list)) ontime)
       (first event-group-list)
       (event-group-starting-at (rest event-group-list) ontime))))
+
+
+(defun filter-event-groups-by-time (event-groups first-bar interval)
+  (if (null event-groups) ()
+    (if (zerop (mod (- (start-time (first event-groups)) first-bar) interval))
+      (cons (first event-groups)
+            (filter-event-groups-by-time (rest event-groups) first-bar interval))
+      (filter-event-groups-by-time (rest event-groups) first-bar interval))))
+
 
