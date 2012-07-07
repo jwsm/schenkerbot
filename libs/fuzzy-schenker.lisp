@@ -1,14 +1,9 @@
-
-
-
-; create membership sets for each rule (membership sets organized by bar and by pitch class)
-
-; use FZ-membership to look up score for each note in given set (i.e. set of near beginning)
-;
-;;; add up all results
-;; stick in list that has one entry for every note
-;; ltop will bring out highest scoring one
-
+; ----------------------------------------------------------
+; FUZZY SCHENKER
+; 
+; Provides methods that run fuzzy Schenkerian analysis on sets of
+; cope events and event groups.
+; ----------------------------------------------------------
 
 
 (defvar *fz-near-beginning* ())
@@ -22,6 +17,10 @@
 
 (defun cope-event-to-beat-index (cope-event)
 	(1- (floor (/ (- (first cope-event) *first-bar*) *ms-per-beat*))))
+
+; ----------------------------------------------------------
+; Run Analysis
+; ----------------------------------------------------------
 
 (defun run-schenker ()
 	
@@ -42,21 +41,6 @@
 		(fz-make-linear-down *near-in-pitches* *lowest-pitch* (+ *near-in-pitches* *lowest-pitch*)))
 
 
-	; Here is the flat set to start out.
-	;(make-flat (length *surface-level-groups*) 0)
-
-	;;(weigh-rules-on-each-cope-event *input-events* (function is-second-urlinie-note))
-
-
-
-	; (dolist (x '(:is-first-urlinie-note :is-second-urlinie-note :is-third-urlinie-note))
-	; 	(let* ((top-indexes (top-n-positions (weigh-rules-on-each-cope-event *input-events* (function x)) 1))
-	;    		(top-cope-events (mapcar #'(lambda (index) (nth index *input-events*)) top-indexes)))
-	;  		(add-cope-event-to-schenker-level-groups (first top-cope-events) 2 *surface-level-groups*)))
-	
-
-	;(weigh-rules)
-
 	;; Run these three functions across the piece to determine the three urlinie notes
 	(dolist (fn (list (function is-first-urlinie-note)
 					  (function is-second-urlinie-note)
@@ -67,6 +51,10 @@
 )
 
 
+; ----------------------------------------------------------
+; Helper Functions to Apply Rules Across Events/Groups
+; ----------------------------------------------------------
+
 (defun run-analysis-function-for-level (fn send-to-level input-events event-groups)
 	(let* ((top-indexes (top-n-positions (weigh-rules-on-each-cope-event input-events fn) 1))
 	   		(top-cope-events (mapcar #'(lambda (index) (nth index input-events)) top-indexes)))
@@ -76,25 +64,14 @@
 (defun weigh-rules-on-each-cope-event (cope-events rules-function)
 	(if (null cope-events) ()
 	  (progn
-		(format t "value for event ~a ~a ~%" (first cope-events) (funcall rules-function (first cope-events)))
+		;(format t "value for event ~a ~a ~%" (first cope-events) (funcall rules-function (first cope-events)))
 		(cons (funcall rules-function (first cope-events))
 			  (weigh-rules-on-each-cope-event (rest cope-events) rules-function)))))
 
 
-;; pick the first note of the urlinie
-; (defun weigh-rules (cope-event)
-; 	(let ((beat-index (cope-event-to-beat-index cope-event))
-; 		  (pitch (second cope-event)))
-; 	(+
-; 		(* (fz-membership *fz-near-beginning* beat-index) 0.5)
-; 		(* (fz-membership *fz-near-top-of-range* pitch) 1.0)
-; 		(* (note-is-top-voice cope-event *surface-level-groups*) 1.0)
-; 		(* (pitch-occurs-often pitch *input-events*) 0.8)
-; 		(* (note-is-harmonized-by-scale-degree-n cope-event 0 *surface-level-groups*) 1.0)
-; 		; also check: is the harmonizing chord in root position, or is there a nearby root position chord to "bind" to?
-; 	)
-; ))
-
+; ----------------------------------------------------------
+; Rule Summation Functions to Find Certain Notes
+; ----------------------------------------------------------
 
 
 (defun is-first-urlinie-note (cope-event)
@@ -143,7 +120,9 @@
 	)
 ))
 
-
+; ----------------------------------------------------------
+; Fuzzy Rule Functions
+; ----------------------------------------------------------
 
 (defun note-is-harmonized-by-scale-degree-n (cope-event scale-degree groups-list)
   "Returns 1 if note is harmonized by root n, 0 if not"
@@ -168,7 +147,4 @@
 (defun pitch-is-scale-degree-n (pitch n)
   "Returns 1 if pitch is scale degree n within key"
 	(if (equal (pitch-to-scale-degree-given-key pitch *key*) n) 1 0))
-
-
-;(run-schenker)
 
