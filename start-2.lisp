@@ -29,8 +29,7 @@
 ;(saveit)
 
 
-(defvar *CHORD-ROOT-GROUPS* ())
-(defvar *SURFACE-LEVEL-GROUPS* ())
+
 
 ; ---------------------------------------------------------
 ; Main Program
@@ -39,6 +38,10 @@
 (defun run-analysis ()
   ; Calculate the ms-per-beat
   (setq *ms-per-beat* (/ *bar-length* *beats-per-bar*))
+  (setq *last-onset* (first (first (last *input-events*))))
+  (setq *total-beats* (floor (/ *last-onset* *ms-per-beat*)))
+  (setq *highest-pitch* (highest-pitch-in-cope-events *input-events*))
+  (setq *lowest-pitch* (lowest-pitch-in-cope-events *input-events*))
 
   ; Find key using PQE histogram
   ;; TODO: add other methods here and choose the most frequently reported answer
@@ -62,33 +65,17 @@
 
   (setf (schenker-level (first *surface-level-groups*)) 2)
   
-  (mapcar #'print-group *surface-level-groups*)
+  ;(mapcar #'print-group *surface-level-groups*)
+
+  (run-schenker)
 
   ;; print left hand to lily-pond
-  ;(event-groups-to-lily-pond *surface-level-groups* T)
-  (lily-pond-file-from-event-groups *surface-level-groups* T)
+  (setf *surface-level-filtered-by-beat* (filter-event-groups-by-time *surface-level-groups* *first-bar* *ms-per-beat*))
+  (lily-pond-file-from-event-groups *surface-level-filtered-by-beat* T)
 
-
-
-  #|
-  this will print out the events for lily pond
-  (print-event-groups-in-lily-pond *chord-root-groups*)
-  |#
-
-;  (setq *roots-list* ())
-;  (setq *roots-list* (calculate-roots *input-events*))
-
- ; (count-chord-roots *roots-list*)
-
-
-
- ; (setq *key* (find-key-of-piece *input-events*))
   T
 )
 
-;(run-analysis)
-;*roots-list*
+(mapcar #'print-group *surface-level-filtered-by-beat*)
 
-#|
-*key*
-|#
+;(run-analysis)
