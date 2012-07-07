@@ -11,6 +11,23 @@
 
 (defconstant *NUM-PITCH-CLASSES* 12)
 
+
+; attributes
+(defvar *last-onset* nil)
+(defvar *total-beats* nil)
+(defvar *highest-pitch* nil)
+(defvar *lowest-pitch* nil)
+
+(defconstant *near-in-beats* 20)
+(defconstant *near-in-pitches* 12)
+(defconstant *occurring-often-for-pitches* 30)
+
+; groups
+(defvar *CHORD-ROOT-GROUPS* ())
+(defvar *SURFACE-LEVEL-GROUPS* ())
+(defvar *surface-level-filtered-by-beat* ())
+
+
 ; ---------------------------------------------------------
 ; Define Global Path Vars
 ; ----------------------------------------------------------
@@ -54,6 +71,7 @@
 ;(load (concatenate 'string *project-libs-base-path* "tree-parser.lisp"))
 ;(load (concatenate 'string *project-libs-base-path* "macro-analysis.lisp"))
 (load (concatenate 'string *project-libs-base-path* "lily-pond.lisp"))
+(load (concatenate 'string *project-libs-base-path* "fuzzy-schenker.lisp"))
 
 ;; Data
 (load (concatenate 'string *data-file-path* "jsb1.lisp"))
