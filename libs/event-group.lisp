@@ -17,7 +17,7 @@
    (root :initform ())
    (quality :initform ())
    (inversion :initform ())
-   (schenker-level :initform 1)))
+   (schenker-levels :initform ())))
 
 ; ---------------------------------------------------------
 ; Generic Method Declarations
@@ -43,8 +43,8 @@
 (defgeneric inversion (eg))
 (defgeneric (setf inversion) (i eg))
 
-(defgeneric schenker-level (eg))
-(defgeneric (setf schenker-level) (sl eg))
+(defgeneric schenker-levels (eg))
+(defgeneric (setf schenker-levels) (sl eg))
 
 (defgeneric add-cope-event-to-group (cope-event eg))
 
@@ -55,6 +55,8 @@
 (defgeneric left-hand-events (eg &optional left-hand))
 (defgeneric right-hand-events (eg))
 (defgeneric possible-functions (eg))
+(defgeneric schenker-level (n eg)) ; return the cope-events in schenker level n
+(defgeneric add-cope-event-to-schenker-level (event level eg))
 
 ; Print Methods
 
@@ -105,11 +107,11 @@
 (defmethod (setf inversion) (i (eg event-group))
   (setf (slot-value eg 'inversion) i))
 
-(defmethod schenker-level ((eg event-group))
-  (slot-value eg 'schenker-level))
+(defmethod schenker-levels ((eg event-group))
+  (slot-value eg 'schenker-levels))
 
-(defmethod (setf schenker-level) (sl (eg event-group))
-  (setf (slot-value eg 'schenker-level) sl))
+(defmethod (setf schenker-levels) (sl (eg event-group))
+  (setf (slot-value eg 'schenker-levels) sl))
 
 (defmethod add-cope-event-to-group (cope-event (eg event-group))
   "Add a cope event to an event group."
@@ -144,6 +146,68 @@
 (defmethod scale-degree-of-root ((eg event-group))
   (pitch-to-scale-degree-given-key (root eg) *key*))
 
+(defmethod schenker-level (n (eg event-group))
+  (second (assoc n (schenker-levels eg) :test #'equal)))
+
+
+(defmethod add-cope-event-to-schenker-level (event level (eg event-group))
+  (let* ((current-levels (slot-value eg 'schenker-levels))
+         (existing-list (assoc level current-levels :test #'equal)))
+    (cond ((null existing-list)
+            (setf (schenker-levels eg)
+              (cons (list level (list event)) current-levels)))
+          (T
+            (setf (schenker-levels eg)
+              (substitute (list level (cons event (second existing-list)))
+                          existing-list
+                          current-levels))))))
+
+
+(defmethod add-cope-event-to-schenker-level-groups (event level event-groups)
+  (add-cope-event-to-schenker-level
+    event
+    level
+    (event-group-starting-at event-groups (first event))))
+
+
+;              (cons '(1234) current-levels))))))
+
+
+
+;     (cond
+;           ;; if there is nothing in the list yet
+;           ;;((null current-levels)
+;           ;;   (cons (list n (list event-group)) current-levels))
+;           ;; if the index does not exist in current-levels, add 
+;           ((null index)
+;               (format t "adding a list ~%")
+;               (cons '(1234) new-list)
+;               (format t "new list ~a ~%" new-list))
+;           ;; otherwise, cons our event onto the list
+;           (T
+;               (format t "adding element ~%")
+;               (setf index (list level (list event)))
+;               (format t "new list ~a ~%" current-levels)))
+;     (format t "current levels: ~a ~%" new-list)
+
+; new-list
+;     ))
+
+
+;   (cond ((null (schenker-level n eg))
+;           (cons (list n (list event)) (schenker-levels eg)))
+;         (T (setf (schenker-level n eg)
+;           (list n (cons event (schenker-level n eg)))))))
+
+
+; (slot-value eg 'schenker-levels)
+
+
+;(defmethod add-cope-event-to-schenker-level (event level (eg event-group))
+;  (setf (nth n (schenker-levels eg)) (cons event (nth n (schenker-levels eg)))))
+
+;  (push event (nth n (schenker-levels eg))))
+  ;; will need to fix this to work universally for any number of levels
 
 ; Printing Methods
 ; - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -152,7 +216,7 @@
   (format t "~10t Count: ~a" (length (cope-events eg)))
   (format t "~10t Start: ~a" (start-time eg))
   (format t "~10t Dur: ~a " (duration eg))
-  (format t "~10t Schenk: ~a " (schenker-level eg))
+  (format t "~10t Schenk: ~a " (schenker-levels eg))
   (format t "~10t Root: ~a " (root eg))
   (format t "~10t inv: ~a " (inversion eg))
   (format t "~10t Root in Key: ~a " (scale-degree-of-root eg))
@@ -203,4 +267,8 @@
             (filter-event-groups-by-time (rest event-groups) first-bar interval))
       (filter-event-groups-by-time (rest event-groups) first-bar interval))))
 
+
+(defun list-schenker-level (level event-groups)
+  "Return a list containing, for each event group, either NIL or a list of level-n schenker notes given a level n"
+  (mapcar #'(lambda (group) (schenker-level level group)) event-groups))
 

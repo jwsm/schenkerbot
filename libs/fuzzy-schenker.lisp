@@ -45,15 +45,32 @@
 	; Here is the flat set to start out.
 	;(make-flat (length *surface-level-groups*) 0)
 
-	(let* ((top-indexes (top-n-positions (weigh-rules-on-each-cope-event *input-events* (function is-second-urlinie-note)) 1))
-		   (top-cope-events (mapcar #'(lambda (index) (nth index *input-events*)) top-indexes)))
+	;;(weigh-rules-on-each-cope-event *input-events* (function is-second-urlinie-note))
 
-		 top-cope-events)
+
+
+	; (dolist (x '(:is-first-urlinie-note :is-second-urlinie-note :is-third-urlinie-note))
+	; 	(let* ((top-indexes (top-n-positions (weigh-rules-on-each-cope-event *input-events* (function x)) 1))
+	;    		(top-cope-events (mapcar #'(lambda (index) (nth index *input-events*)) top-indexes)))
+	;  		(add-cope-event-to-schenker-level-groups (first top-cope-events) 2 *surface-level-groups*)))
 	
 
 	;(weigh-rules)
+
+	;; Run these three functions across the piece to determine the three urlinie notes
+	(dolist (fn (list (function is-first-urlinie-note)
+					  (function is-second-urlinie-note)
+					  (function is-third-urlinie-note)))
+
+		(run-analysis-function-for-level fn 2 *input-events* *surface-level-groups*))
+
 )
 
+
+(defun run-analysis-function-for-level (fn send-to-level input-events event-groups)
+	(let* ((top-indexes (top-n-positions (weigh-rules-on-each-cope-event input-events fn) 1))
+	   		(top-cope-events (mapcar #'(lambda (index) (nth index input-events)) top-indexes)))
+	 		(add-cope-event-to-schenker-level-groups (first top-cope-events) send-to-level event-groups)))
 
 
 (defun weigh-rules-on-each-cope-event (cope-events rules-function)
@@ -96,6 +113,7 @@
 ))
 
 (defun is-second-urlinie-note (cope-event)
+	;;(format t "checking event ~a ~%" cope-event)
 	(let ((beat-index (cope-event-to-beat-index cope-event))
 		  (pitch (second cope-event)))
 	(+
