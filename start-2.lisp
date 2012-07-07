@@ -63,7 +63,7 @@
   (mapcar #'self-analysis *surface-level-groups*)
 
 
-  (setf (schenker-level (first *surface-level-groups*)) 2)
+  ;;(setf (schenker-levels (first *surface-level-groups*)) 2)
   
   ;(mapcar #'print-group *surface-level-groups*)
 
@@ -78,4 +78,8 @@
 
 (mapcar #'print-group *surface-level-filtered-by-beat*)
 
-;(run-analysis)
+(run-analysis)
+
+
+(list-schenker-level 2 *surface-level-groups*)
+
