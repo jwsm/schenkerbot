@@ -16,6 +16,14 @@ pitch-class-to-note-name
   "return the note name for a given cope event"
   (pitch-class-to-note-name (midi-pitch-to-pitch-class (second cope-event))))
 
+(defun highest-pitch-in-cope-events (cope-events)
+  "return the highest MIDI pitch in a list of cope events."
+  (apply #'max (mapcar #'second cope-events)))
+
+(defun lowest-pitch-in-cope-events (cope-events)
+  "return the lowest MIDI pitch in a list of cope events."
+  (apply #'min (mapcar #'second cope-events)))
+
 
 #|
 group-by-simultaneous-start
