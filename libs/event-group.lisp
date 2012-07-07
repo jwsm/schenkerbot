@@ -146,9 +146,13 @@
 (defmethod scale-degree-of-root ((eg event-group))
   (pitch-to-scale-degree-given-key (root eg) *key*))
 
+
+; Schenker Level Functions
+; add and remove cope events to different levels
+; - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 (defmethod schenker-level (n (eg event-group))
   (second (assoc n (schenker-levels eg) :test #'equal)))
-
 
 (defmethod add-cope-event-to-schenker-level (event level (eg event-group))
   (let* ((current-levels (slot-value eg 'schenker-levels))
@@ -169,45 +173,6 @@
     level
     (event-group-starting-at event-groups (first event))))
 
-
-;              (cons '(1234) current-levels))))))
-
-
-
-;     (cond
-;           ;; if there is nothing in the list yet
-;           ;;((null current-levels)
-;           ;;   (cons (list n (list event-group)) current-levels))
-;           ;; if the index does not exist in current-levels, add 
-;           ((null index)
-;               (format t "adding a list ~%")
-;               (cons '(1234) new-list)
-;               (format t "new list ~a ~%" new-list))
-;           ;; otherwise, cons our event onto the list
-;           (T
-;               (format t "adding element ~%")
-;               (setf index (list level (list event)))
-;               (format t "new list ~a ~%" current-levels)))
-;     (format t "current levels: ~a ~%" new-list)
-
-; new-list
-;     ))
-
-
-;   (cond ((null (schenker-level n eg))
-;           (cons (list n (list event)) (schenker-levels eg)))
-;         (T (setf (schenker-level n eg)
-;           (list n (cons event (schenker-level n eg)))))))
-
-
-; (slot-value eg 'schenker-levels)
-
-
-;(defmethod add-cope-event-to-schenker-level (event level (eg event-group))
-;  (setf (nth n (schenker-levels eg)) (cons event (nth n (schenker-levels eg)))))
-
-;  (push event (nth n (schenker-levels eg))))
-  ;; will need to fix this to work universally for any number of levels
 
 ; Printing Methods
 ; - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
