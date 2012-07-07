@@ -135,6 +135,15 @@
 (defun inversion-index-to-name (index)
   (nth index *inversion-names*))
 
+
+; ----------------------------------------------------------
+; Data Tables
+; ----------------------------------------------------------
+
+; Functional Harmony Data
+; lists of harmonic function given chord quality and root
+; - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 ;; TODO: defun diatonic-mapping -- returns expected diatonic chord quality based on scale-degree
 
 ;; TODO: add an "allowed in" that says whether these functions are allowed in major or minor keys, or both.
@@ -208,6 +217,11 @@
   )
 
 ))
+
+
+; Inversion Data
+; lists of figured bass for inversion given inversion number
+; - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 ; TODO: need to modify the 2nd inversion if it is a 7th chord.
 
