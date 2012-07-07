@@ -95,7 +95,9 @@ designate octave.
               (format t "[_\\markup { \\bold ~a ~a }]~%"
                           (second best-function-choice)
                           inversion-symbol)))
-          (format t "s ~%~%"))
+          (format t "s ~%~%")
+          (format t "s ~%~%")
+          )
 
         ;; print the right hand
         (T
@@ -122,9 +124,34 @@ designate octave.
       (print-each-lily-pond-note (rest notes)))))
 
 
+(defun lily-pond-start-rh-section ()
+  (format t "{")
+  (format t "\\override Staff.NoteCollision ~% #'merge-differently-headed = ##t")
+  (format t "\\clef treble")
+  (format t "\\override Stem #'transparent = ##t")
+)
+
+(defun lily-pond-start-lh-section ()
+  (format t "{")
+  (format t "\\override Staff.NoteCollision ~% #'merge-differently-headed = ##t")
+  (format t "\\clef bass")
+  (format t "\\override Stem #'transparent = ##t")
+)
+
+(defun lily-pond-end-section ()
+  (format t "}")
+)
+
 (defun lily-pond-file-from-event-groups (event-groups left-hand)
   "Write out event-group-output.ly file based on calling event-groups-to-lily-pond."
   (with-open-file (outfile "/Users/jwsm/Sites/wacm/tmp/event-group-output.ly" :direction :output :if-exists :supersede)
     (let ((*standard-output* outfile))
-      (event-groups-to-lily-pond event-groups left-hand))))
+
+      ;(lily-pond-start-rh-section)
+      ;(event-groups-to-lily-pond event-groups nil)
+      ;(lily-pond-end-section)
+
+      (lily-pond-start-lh-section)
+      (event-groups-to-lily-pond event-groups T)
+      (lily-pond-end-section))))
 
