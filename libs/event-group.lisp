@@ -164,7 +164,10 @@
 ; - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 (defmethod schenker-level (n (eg event-group))
-  (second (assoc n (schenker-levels eg) :test #'equal)))
+  (cond ((equal n 1)
+          (cope-events eg))
+        (T
+          (second (assoc n (schenker-levels eg) :test #'equal)))))
 
 (defmethod add-cope-event-to-schenker-level (event level (eg event-group))
   (let* ((current-levels (slot-value eg 'schenker-levels))
@@ -180,10 +183,16 @@
 
 
 (defmethod add-cope-event-to-schenker-level-groups (event level event-groups)
-  (add-cope-event-to-schenker-level
-    event
-    level
-    (event-group-starting-at event-groups (first event))))
+  (let ((target-event-group (event-group-starting-at event-groups (first event))))
+    (add-cope-event-to-schenker-level
+      event
+      level
+      target-event-group)
+    ; also add the corresponding bass note
+    (add-cope-event-to-schenker-level
+      (lowest-cope-event-in-cope-events (cope-events target-event-group))
+      level
+      target-event-group)))
 
 
 ; Printing Methods
@@ -248,4 +257,8 @@
 (defun list-schenker-level (level event-groups)
   "Return a list containing, for each event group, either NIL or a list of level-n schenker notes given a level n"
   (mapcar #'(lambda (group) (schenker-level level group)) event-groups))
+
+(defun list-harmonic-functions (event-groups)
+  (mapcar #'(lambda (x) (list (second (first (possible-functions x)))
+                              (inversion-index-to-name (inversion x)))) event-groups))
 
