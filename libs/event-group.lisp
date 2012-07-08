@@ -9,42 +9,54 @@
 (defclass event-group ()
   ((start-time
     :initarg :start-time
-    :initform 0)
+    :initform 0
+    :accessor start-time)
    (duration
     :initarg :duration
-    :initform 0)
-   (cope-events :initform ())
-   (root :initform ())
-   (quality :initform ())
-   (inversion :initform ())
-   (schenker-levels :initform ())))
+    :initform 0
+    :accessor duration)
+   (cope-events
+    :initform ()
+    :accessor cope-events)
+   (root
+    :initform ()
+    :accessor root)
+   (quality
+    :initform ()
+    :accessor quality)
+   (inversion
+    :initform ()
+    :accessor inversion)
+   (schenker-levels
+    :initform ()
+    :accessor schenker-levels)))
 
 ; ---------------------------------------------------------
 ; Generic Method Declarations
 ; ---------------------------------------------------------
 
-; Accessors
+; ; Accessors
 
-(defgeneric start-time (eg))
-(defgeneric (setf start-time) (time eg))
+; (defgeneric start-time (eg))
+; (defgeneric (setf start-time) (time eg))
 
-(defgeneric duration (eg))
-(defgeneric (setf duration) (d eg))
+; (defgeneric duration (eg))
+; (defgeneric (setf duration) (d eg))
 
-(defgeneric cope-events (eg))
-(defgeneric (setf cope-events) (events eg))
+; (defgeneric cope-events (eg))
+; (defgeneric (setf cope-events) (events eg))
 
-(defgeneric root (eg))
-(defgeneric (setf root) (r eg))
+; (defgeneric root (eg))
+; (defgeneric (setf root) (r eg))
 
-(defgeneric quality (eg))
-(defgeneric (setf quality) (q eg))
+; (defgeneric quality (eg))
+; (defgeneric (setf quality) (q eg))
 
-(defgeneric inversion (eg))
-(defgeneric (setf inversion) (i eg))
+; (defgeneric inversion (eg))
+; (defgeneric (setf inversion) (i eg))
 
-(defgeneric schenker-levels (eg))
-(defgeneric (setf schenker-levels) (sl eg))
+; (defgeneric schenker-levels (eg))
+; (defgeneric (setf schenker-levels) (sl eg))
 
 (defgeneric add-cope-event-to-group (cope-event eg))
 
@@ -71,47 +83,47 @@
 
 ; Accessor Methods
 ; - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-(defmethod start-time ((eg event-group))
-  (slot-value eg 'start-time))
+; (defmethod start-time ((eg event-group))
+;   (slot-value eg 'start-time))
 
-(defmethod (setf start-time) (time (eg event-group))
-  (setf (slot-value eg 'start-time) time))
+; (defmethod (setf start-time) (time (eg event-group))
+;   (setf (slot-value eg 'start-time) time))
 
-(defmethod duration ((eg event-group))
-  (slot-value eg 'duration))
+; (defmethod duration ((eg event-group))
+;   (slot-value eg 'duration))
 
-(defmethod (setf duration) (d (eg event-group))
-  (setf (slot-value eg 'duration) d))
+; (defmethod (setf duration) (d (eg event-group))
+;   (setf (slot-value eg 'duration) d))
 
-(defmethod cope-events ((eg event-group))
-  (slot-value eg 'cope-events))
+; (defmethod cope-events ((eg event-group))
+;   (slot-value eg 'cope-events))
 
-(defmethod (setf cope-events) (events (eg event-group))
-  (setf (slot-value eg 'cope-events) events))
+; (defmethod (setf cope-events) (events (eg event-group))
+;   (setf (slot-value eg 'cope-events) events))
 
-(defmethod root ((eg event-group))
-  (slot-value eg 'root))
+; (defmethod root ((eg event-group))
+;   (slot-value eg 'root))
 
-(defmethod (setf root) (r (eg event-group))
-  (setf (slot-value eg 'root) r))
+; (defmethod (setf root) (r (eg event-group))
+;   (setf (slot-value eg 'root) r))
 
-(defmethod quality ((eg event-group))
-  (slot-value eg 'quality))
+; (defmethod quality ((eg event-group))
+;   (slot-value eg 'quality))
 
-(defmethod (setf quality) (q (eg event-group))
-  (setf (slot-value eg 'quality) q))
+; (defmethod (setf quality) (q (eg event-group))
+;   (setf (slot-value eg 'quality) q))
 
-(defmethod inversion ((eg event-group))
-  (slot-value eg 'inversion))
+; (defmethod inversion ((eg event-group))
+;   (slot-value eg 'inversion))
 
-(defmethod (setf inversion) (i (eg event-group))
-  (setf (slot-value eg 'inversion) i))
+; (defmethod (setf inversion) (i (eg event-group))
+;   (setf (slot-value eg 'inversion) i))
 
-(defmethod schenker-levels ((eg event-group))
-  (slot-value eg 'schenker-levels))
+; (defmethod schenker-levels ((eg event-group))
+;   (slot-value eg 'schenker-levels))
 
-(defmethod (setf schenker-levels) (sl (eg event-group))
-  (setf (slot-value eg 'schenker-levels) sl))
+; (defmethod (setf schenker-levels) (sl (eg event-group))
+;   (setf (slot-value eg 'schenker-levels) sl))
 
 (defmethod add-cope-event-to-group (cope-event (eg event-group))
   "Add a cope event to an event group."
