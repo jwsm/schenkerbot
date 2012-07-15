@@ -1,5 +1,9 @@
 \version "2.14.2"
 
+%% This template was found at:
+%% http://www.mail-archive.com/lilypond-user@gnu.org/msg69861/rN.ly
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% A function to create Roman numerals for harmonic analysis.
 %%
