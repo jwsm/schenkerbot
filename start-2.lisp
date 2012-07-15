@@ -1,15 +1,12 @@
+;#!/usr/local/bin/sbcl --script
+(format t "~%")
+(format t "Fuzzy Schenker - Gratuitously Fuzzy Development Version")
+(format t "-------------------------------")
+
 (load "/Users/jwsm/Desktop/WACM/project/project-v2/libs/project-libs.lisp")
 (setq *work-dir* "/Users/jwsm/Desktop/WACM/project/")
 
-#|
 ; OPTION 1
-(setq *input-events* b206b)
-(setq *first-bar* 0)
-(setq *bar-length* 4000)
-(setq *beats-per-bar* 4)
-
-; OPTION 3
-|#
 (setq *input-events* b306b)
 (setq *first-bar* 0)
 (setq *bar-length* 4000)
@@ -17,14 +14,22 @@
 
 #|
 ; OPTION 2
+(setq *input-events* b206b)
+(setq *first-bar* 0)
+(setq *bar-length* 4000)
+(setq *beats-per-bar* 4)
+
+; OPTION 3
 (setq *input-events* (get-midi "invent8.mid"))
 (setq *first-bar* 0)
 (setq *bar-length* 1500)
 (setq *beats-per-bar* 3)
 
-(setq *surface-level-groups* (cope-events-to-event-groups *input-events*))
-(print-groups *surface-level-groups*)
-(left-hand-events (first *surface-level-groups*))
+OPTION 4
+(setq *input-events* b606b)
+(setq *first-bar* 0)
+(setq *bar-length* 4000)
+(setq *beats-per-bar* 4)
 |#
 ;(saveit)
 
@@ -35,7 +40,9 @@
 ; Main Program
 ; ----------------------------------------------------------
 
-(defun run-analysis ()
+(defun run-analysis (analysis-level)
+  (format t "~%Running Analysis...~%")
+
   ; Calculate the ms-per-beat
   (setq *ms-per-beat* (/ *bar-length* *beats-per-bar*))
   (setq *last-onset* (first (first (last *input-events*))))
@@ -57,29 +64,36 @@
 
   (format t "The key is: ~a ~%" *key*) 
 
+  ;; Load the cope-events into event-group objects
   (setq *surface-level-groups* (cope-events-to-event-groups *input-events*))
-  (setq *chord-root-groups* (chord-roots-to-cope-event-groups (calculate-roots *input-events*)))
+  ;(setq *chord-root-groups* (chord-roots-to-cope-event-groups (calculate-roots *input-events*)))
   
   (mapcar #'self-analysis *surface-level-groups*)
 
-
-  ;;(setf (schenker-levels (first *surface-level-groups*)) 2)
-  
-  ;(mapcar #'print-group *surface-level-groups*)
-
+  ; Run the schenkerian Analysis
   (run-schenker)
 
-  ;; print left hand to lily-pond
+  ;; Filter the groups by beat
   (setf *surface-level-filtered-by-beat* (filter-event-groups-by-time *surface-level-groups* *first-bar* *ms-per-beat*))
-  (lily-pond-file-from-event-groups *surface-level-filtered-by-beat* T)
+
+  ;; print notes, key and functions to lily pond
+  (lily-pond-write-key-to-file *key*)
+
+  (lily-pond-file-from-events-list "soprano.txt" (split-cope-event-groups-by-register
+                                                (list-schenker-level analysis-level *surface-level-filtered-by-beat*) 60 nil))
+  (lily-pond-file-from-events-list "bass.txt" (split-cope-event-groups-by-register
+                                               (list-schenker-level analysis-level *surface-level-filtered-by-beat*) 60 T))
+
+
+  ;(list-roman-numerals 2 *surface-level-groups*)
+  (lily-pond-harmonic-functions-from-events-list *surface-level-filtered-by-beat* analysis-level)
 
   T
 )
 
-(mapcar #'print-group *surface-level-filtered-by-beat*)
+;(run-analysis 2)
 
-(run-analysis)
+;(mapcar #'print-group *surface-level-filtered-by-beat*)
+;(list-schenker-level 2 *surface-level-groups*)
 
-
-(list-schenker-level 2 *surface-level-groups*)
 
