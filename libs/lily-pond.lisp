@@ -155,3 +155,81 @@ designate octave.
       (event-groups-to-lily-pond event-groups T)
       (lily-pond-end-section))))
 
+
+
+
+; -----------------------------------------------------------------------------------------------
+
+;; each one is a list of cope events, may just be a one item list, or a nil which should be a space (rest) in the music
+(defun cope-event-lists-to-lily-pond-with-nil-spaces (events-list)
+  (if (null events-list) T
+    (progn
+      (cond ((null (first events-list))
+              ;(format t " "))
+              (format t " s "))
+          (T
+              (format t " s ")
+              (print-lily-pond-chord (first events-list))
+              (format t " s ")
+              ))
+              ;(format t " < c > ")))
+      (cope-event-lists-to-lily-pond-with-nil-spaces (rest events-list)))))
+
+
+
+
+
+(defun lily-pond-harmonic-functions (chord-list)
+  (if (null chord-list) T
+    (progn
+      (cond ((= (length (first chord-list)) 0)
+              (format t "?~%")
+              ;(format t " ")
+              )
+            (T
+              (format t "\\markup \\rN  {")
+              (format t (first chord-list))
+              (format t "}~%")
+              ;(format t "} ~%")
+            ))
+      (lily-pond-harmonic-functions (rest chord-list)))))
+
+
+  ; (cond ((null chord-list) T)
+  ;       ((position nil chord-list) T)
+  ;       (T  (format t "\\markup \\rN  { ")
+  ;           (format t " I ")
+  ;           (format t "} ~%"))))
+
+
+(defun lily-pond-file-from-events-list (file-name events-list)
+  "Write out note (soprano/bass) file to lily-pond."
+  (with-open-file (outfile (concatenate 'string "/Users/jwsm/Desktop/WACM/project/pdf_output/tmp/" file-name) :direction :output :if-exists :supersede)
+    (let ((*standard-output* outfile))
+
+      (cope-event-lists-to-lily-pond-with-nil-spaces events-list)
+
+      )))
+
+
+(defun lily-pond-harmonic-functions-from-events-list (events-list schenker-level)
+  "Write out note harmonic functions file to lily-pond."
+  (with-open-file (outfile (concatenate 'string "/Users/jwsm/Desktop/WACM/project/pdf_output/tmp/" "chords.txt") :direction :output :if-exists :supersede)
+    (let ((*standard-output* outfile))
+
+      (lily-pond-harmonic-functions (list-roman-numerals schenker-level events-list))
+
+      )))
+
+(defun lily-pond-write-string-to-file (file-name key)
+  (with-open-file (outfile (concatenate 'string "/Users/jwsm/Desktop/WACM/project/pdf_output/tmp/" file-name) :direction :output :if-exists :supersede)
+    (let ((*standard-output* outfile))
+
+      (format t key)
+
+      )))
+
+
+(defun lily-pond-write-key-to-file (key)
+  (lily-pond-write-string-to-file "key.txt" (pitch-class-to-lily-pond key)))
+
