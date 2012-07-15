@@ -1,3 +1,7 @@
+; COPE-EVENT FUNCTIONS
+; Functions performing common tasks on cope events.
+; ---------------------------------------------------------
+
 #|
 midi-pitch-to-pitch-class
 |#
@@ -23,6 +27,40 @@ pitch-class-to-note-name
 (defun lowest-pitch-in-cope-events (cope-events)
   "return the lowest MIDI pitch in a list of cope events."
   (apply #'min (mapcar #'second cope-events)))
+
+
+(defun lowest-cope-event-in-cope-events-helper (cope-events min lowest-so-far)
+  "Helper method for lowest-cope-event-in-cope-events."
+  (if (null cope-events) lowest-so-far
+    (if (< (second (first cope-events)) min)
+      (lowest-cope-event-in-cope-events-helper (rest cope-events) (second (first cope-events)) (first cope-events))
+      (lowest-cope-event-in-cope-events-helper (rest cope-events) min lowest-so-far))))
+
+(defun lowest-cope-event-in-cope-events (cope-events)
+  "Find the lowest-pitched cope event among a list of cope events."
+  (if (null cope-events) ()
+    (lowest-cope-event-in-cope-events-helper cope-events (second (first cope-events)) (first cope-events))))
+
+
+(defun split-cope-event-groups-by-register-helper (cope-event-group split down)
+  (cond ((null cope-event-group) ())
+        ((equal down T)
+          (if (>= split (second (first cope-event-group)))
+                (cons (first cope-event-group)
+                      (split-cope-event-groups-by-register-helper (rest cope-event-group) split down))
+                (split-cope-event-groups-by-register-helper (rest cope-event-group) split down)))
+        (T
+          (if (< split (second (first cope-event-group)))
+                (cons (first cope-event-group)
+                      (split-cope-event-groups-by-register-helper (rest cope-event-group) split down))
+                (split-cope-event-groups-by-register-helper (rest cope-event-group) split down)))))
+
+(defun split-cope-event-groups-by-register (cope-event-groups &optional (split 60) (down nil))
+  (if (null cope-event-groups) ()
+    (cond ((null (first cope-event-groups))
+             (cons nil (split-cope-event-groups-by-register (rest cope-event-groups) split down)))
+          (T (cons (split-cope-event-groups-by-register-helper (first cope-event-groups) split down)
+                   (split-cope-event-groups-by-register (rest cope-event-groups) split down))))))
 
 
 #|
