@@ -47,6 +47,8 @@
 ; Load Libraries
 ; ----------------------------------------------------------
 
+(format t "~%Loading WACM Libraries... ~%")
+
 ;; WACM-provided libraries
 (load (concatenate 'string *libs-base-path* "wacm/mgc.lisp"))
 (load (concatenate 'string *libs-base-path* "wacm/rand.lisp"))
@@ -58,6 +60,7 @@
 (load (concatenate 'string *project-libs-base-path* "fz_catch_chord-altered.lisp"))
 (load (concatenate 'string *libs-base-path* "wacm/root-lister.lisp"))
 
+(format t "~%Loading JWSM Libraries... ~%")
 ;; My libraries
 ;(load (concatenate 'string *project-libs-base-path* "user-prompt.lisp"))
 
