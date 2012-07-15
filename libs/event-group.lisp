@@ -140,7 +140,6 @@
   (format t "~10t Root in Key: ~a " (scale-degree-of-root eg))
   (format t "~10t Funcs: ~a " (functions-given-scale-degree-and-quality (scale-degree-of-root eg) (quality eg)))
   (format t "~10t Qual: ~a" (chord-quality-index-to-symbol (quality eg)))
-;  (format t "~10t Function: ~a" (possible-functions eg))
   (format t "~%"))
 
 (defun print-groups (event-groups)
@@ -172,6 +171,7 @@
 
 (defun event-group-starting-at (event-group-list ontime)
   "Return the first event group found in event-group-list that starts at ontime."
+  ;(format t "starint at ontime ~a ~%" ontime )
   (if (null event-group-list) ()
     (if (equal (start-time (first event-group-list)) ontime)
       (first event-group-list)
@@ -190,7 +190,24 @@
   "Return a list containing, for each event group, either NIL or a list of level-n schenker notes given a level n"
   (mapcar #'(lambda (group) (schenker-level level group)) event-groups))
 
-(defun list-harmonic-functions (event-groups)
-  (mapcar #'(lambda (x) (list (second (first (possible-functions x)))
-                              (inversion-index-to-name (inversion x)))) event-groups))
+
+(defun find-roman-numeral-given-ontime (ontime event-groups)
+  (let ((event-group (event-group-starting-at event-groups ontime)))
+    (if (null event-group) ""
+      (if (null (possible-functions event-group)) ""
+        (concatenate 'string (second (first (possible-functions event-group))) " " (inversion-index-to-name (inversion event-group)))))))
+
+
+(defun list-roman-numerals (level event-groups)
+  (let ((current-schenker-level (list-schenker-level level event-groups)))
+    (mapcar #'(lambda (x) (find-roman-numeral-given-ontime (first (first x)) event-groups)) current-schenker-level)))
+
+
+  ; (mapcar #'(lambda (x)
+  ;   (if (null (possible-functions x)) ""
+  ;       (concatenate 'string (second (first (possible-functions x))) " " (inversion-index-to-name (inversion x)) ))) event-groups))
+
+
+    ; ) (list (second (first (possible-functions x)))
+    ;                           (inversion-index-to-name (inversion x)))) event-groups))
 
