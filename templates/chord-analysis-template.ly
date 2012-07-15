@@ -277,6 +277,10 @@
 	title = "Analysis by Lisp"
 }
 
+\paper {
+  #(set-paper-size "tabloid" 'landscape)
+}
+
 SopranoMusic = {
        \clef treble
        \numericTimeSignature
@@ -336,24 +340,24 @@ analysis = \lyricmode {
                        >>
                >>
 
-               \new PianoStaff <<
-               \new Staff <<
-               \clef treble
-                       \override Score.TimeSignature #'stencil = ##f
-                       \new Voice = "Soprano" <<
-                       \voiceOne
-                       \SopranoMusic
-                       >>
-                       >>
-               \new Staff <<
-               \clef bass
-                       \new Voice = "Bass" <<
-                       \voiceTwo
-                       \BassMusic
-                       >>
-                       \new Lyrics \lyricsto "Bass" \analysis
-                       >>
-               >>
+              % \new PianoStaff <<
+              % \new Staff <<
+              % \clef treble
+              %         \override Score.TimeSignature #'stencil = ##f
+              %         \new Voice = "Soprano" <<
+              %         \voiceOne
+              %         \SopranoMusic
+              %         >>
+              %         >>
+              % \new Staff <<
+              % \clef bass
+              %         \new Voice = "Bass" <<
+              %         \voiceTwo
+              %         \BassMusic
+              %         >>
+              %         \new Lyrics \lyricsto "Bass" \analysis
+              %         >>
+              % >>
 
         >>
 }
